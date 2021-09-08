@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// A country definition with image asset, dialing code and localized name.
 class Country {
@@ -20,11 +19,11 @@ class Country {
 
   /// Instantiates a [Country] with the specified [asset], [dialingCode] and [isoCode]
   const Country({
-    @required this.asset,
-    @required this.dialingCode,
-    @required this.isoCode,
-    @required this.currency,
-    @required this.currencyISO,
+    required this.asset,
+    required this.dialingCode,
+    required this.isoCode,
+    required this.currency,
+    required this.currencyISO,
     this.name = "",
   });
 
@@ -34,7 +33,7 @@ class Country {
       o.dialingCode == this.dialingCode &&
       o.isoCode == this.isoCode &&
       o.asset == this.asset &&
-      o.name == this.name && 
+      o.name == this.name &&
       o.currency == this.currency &&
       o.currencyISO == this.currencyISO;
 
@@ -2303,13 +2302,13 @@ class Country {
   }
 
   /// Creates a copy with modified values
-  Country copyWith({
-    String name,
-    String isoCode,
-    String dialingCode,
-    String currency,
-    String currencyISO,
-  }) {
+  Country copyWith(
+      {String? name,
+      String? isoCode,
+      String? dialingCode,
+      String? currency,
+      String? currencyISO,
+      String? asset}) {
     return Country(
       name: name ?? this.name,
       isoCode: isoCode ?? this.isoCode,

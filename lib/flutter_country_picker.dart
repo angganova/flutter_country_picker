@@ -8,7 +8,7 @@ export 'country.dart';
 
 const _platform = const MethodChannel('biessek.rocks/flutter_country_picker');
 Future<List<Country>> _fetchLocalizedCountryNames() async {
-  List<Country> renamed = new List();
+  List<Country> renamed = [];
   Map result;
   try {
     var isoCodes = <String>[];
@@ -17,7 +17,7 @@ Future<List<Country>> _fetchLocalizedCountryNames() async {
     });
     result = await _platform.invokeMethod(
         'getCountryNames', <String, dynamic>{'isoCodes': isoCodes});
-  } on PlatformException catch (e) {
+  } on PlatformException catch (_) {
     return Country.ALL;
   }
 
@@ -34,9 +34,9 @@ Future<List<Country>> _fetchLocalizedCountryNames() async {
 /// pre defined list, see [Country.ALL]
 class CountryPicker extends StatelessWidget {
   const CountryPicker({
-    Key key,
+    Key? key,
     this.selectedCountry,
-    @required this.onChanged,
+    required this.onChanged,
     this.dense = false,
     this.showFlag = true,
     this.showDialingCode = false,
@@ -49,7 +49,7 @@ class CountryPicker extends StatelessWidget {
     this.currencyISOTextStyle,
   }) : super(key: key);
 
-  final Country selectedCountry;
+  final Country? selectedCountry;
   final ValueChanged<Country> onChanged;
   final bool dense;
   final bool showFlag;
@@ -57,24 +57,24 @@ class CountryPicker extends StatelessWidget {
   final bool showName;
   final bool showCurrency;
   final bool showCurrencyISO;
-  final TextStyle nameTextStyle;
-  final TextStyle dialingCodeTextStyle;
-  final TextStyle currencyTextStyle;
-  final TextStyle currencyISOTextStyle;
+  final TextStyle? nameTextStyle;
+  final TextStyle? dialingCodeTextStyle;
+  final TextStyle? currencyTextStyle;
+  final TextStyle? currencyISOTextStyle;
 
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
-    Country displayCountry = selectedCountry;
+    Country? displayCountry = selectedCountry;
 
     if (displayCountry == null) {
       displayCountry =
-          Country.findByIsoCode(Localizations.localeOf(context).countryCode);
+          Country.findByIsoCode(Localizations.localeOf(context).countryCode??'US');
     }
 
     return dense
-        ? _renderDenseDisplay(context, displayCountry)
-        : _renderDefaultDisplay(context, displayCountry);
+        ? _renderDenseDisplay(context, displayCountry!)
+        : _renderDefaultDisplay(context, displayCountry!);
   }
 
   _renderDefaultDisplay(BuildContext context, Country displayCountry) {
@@ -153,7 +153,7 @@ class CountryPicker extends StatelessWidget {
 
   Future<Null> _selectCountry(
       BuildContext context, Country defaultCountry) async {
-    final Country picked = await showCountryPicker(
+    final Country? picked = await showCountryPicker(
       context: context,
       defaultCountry: defaultCountry,
     );
@@ -164,9 +164,9 @@ class CountryPicker extends StatelessWidget {
 
 /// Display a [Dialog] with the country list to selection
 /// you can pass and [defaultCountry], see [Country.findByIsoCode]
-Future<Country> showCountryPicker({
-  BuildContext context,
-  Country defaultCountry,
+Future<Country?> showCountryPicker({
+  required BuildContext context,
+  required Country defaultCountry,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
 
@@ -180,8 +180,8 @@ Future<Country> showCountryPicker({
 
 class _CountryPickerDialog extends StatefulWidget {
   const _CountryPickerDialog({
-    Key key,
-    Country defaultCountry,
+    Key? key,
+    Country? defaultCountry,
   }) : super(key: key);
 
   @override
@@ -190,8 +190,8 @@ class _CountryPickerDialog extends StatefulWidget {
 
 class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   TextEditingController controller = new TextEditingController();
-  String filter;
-  List<Country> countries;
+  String? filter;
+  List<Country>? countries;
 
   @override
   void initState() {
@@ -245,15 +245,15 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
-                  itemCount: countries.length,
+                  itemCount: countries?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Country country = countries[index];
+                    Country country = countries![index];
                     if (filter == null ||
                         filter == "" ||
                         country.name
                             .toLowerCase()
-                            .contains(filter.toLowerCase()) ||
-                        country.isoCode.contains(filter)) {
+                            .contains(filter!.toLowerCase()) ||
+                        country.isoCode.contains(filter!)) {
                       return InkWell(
                         child: ListTile(
                           trailing: Text("+ ${country.dialingCode}"),
