@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'country.dart';
 import 'package:diacritic/diacritic.dart';
-
 export 'country.dart';
 
 const _platform = const MethodChannel('biessek.rocks/flutter_country_picker');
+
 Future<List<Country>> _fetchLocalizedCountryNames() async {
   List<Country> renamed = [];
   Map result;
@@ -43,6 +43,7 @@ class CountryPicker extends StatelessWidget {
     this.showName = true,
     this.showCurrency = false,
     this.showCurrencyISO = false,
+    this.showDownArrow = true,
     this.nameTextStyle,
     this.dialingCodeTextStyle,
     this.currencyTextStyle,
@@ -57,6 +58,7 @@ class CountryPicker extends StatelessWidget {
   final bool showName;
   final bool showCurrency;
   final bool showCurrencyISO;
+  final bool showDownArrow;
   final TextStyle? nameTextStyle;
   final TextStyle? dialingCodeTextStyle;
   final TextStyle? currencyTextStyle;
@@ -68,8 +70,8 @@ class CountryPicker extends StatelessWidget {
     Country? displayCountry = selectedCountry;
 
     if (displayCountry == null) {
-      displayCountry =
-          Country.findByIsoCode(Localizations.localeOf(context).countryCode??'US');
+      displayCountry = Country.findByIsoCode(
+          Localizations.localeOf(context).countryCode ?? 'US');
     }
 
     return dense
@@ -115,10 +117,11 @@ class CountryPicker extends StatelessWidget {
               " ${displayCountry.currencyISO}",
               style: currencyISOTextStyle,
             )),
-          Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey.shade700
-                  : Colors.white70),
+          if (showDownArrow)
+            Icon(Icons.arrow_drop_down,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey.shade700
+                    : Colors.white70),
         ],
       ),
       onTap: () {
@@ -139,10 +142,11 @@ class CountryPicker extends StatelessWidget {
             height: 24.0,
             fit: BoxFit.fitWidth,
           ),
-          Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey.shade700
-                  : Colors.white70),
+          if (showDownArrow)
+            Icon(Icons.arrow_drop_down,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey.shade700
+                    : Colors.white70),
         ],
       ),
       onTap: () {
@@ -173,8 +177,8 @@ Future<Country?> showCountryPicker({
   return await showDialog<Country>(
     context: context,
     builder: (BuildContext context) => _CountryPickerDialog(
-          defaultCountry: defaultCountry,
-        ),
+      defaultCountry: defaultCountry,
+    ),
   );
 }
 
